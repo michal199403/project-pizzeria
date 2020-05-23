@@ -59,8 +59,9 @@
       /* Zapisanie właściwości instancji */
       thisProduct.id = id;
       thisProduct.data = data;
-
+      /* Wywoływanie metod */
       thisProduct.renderInMenu();
+      thisProduct.initAccordion();
       console.log('New Product', thisProduct);
     }
     /* Metoda renderowania produktów WEWNĄTRZ KLASY */
@@ -74,6 +75,34 @@
       const menuContainer = document.querySelector(select.containerOf.menu);
       /* Dodawanie elementu do menu */
       menuContainer.appendChild(thisProduct.element);
+    }
+    /* Metoda akordeonu */
+    initAccordion() {
+      const thisProduct = this;
+      /* Znajdowanie elementu który ma reagować na kliknięcie */
+      const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+
+      /* START: nasłuchiwanie kliknięcia */
+      clickableTrigger.addEventListener('click', function () {
+        console.log('Akordeon kliknięty: ', clickableTrigger);
+        /* Zapobieganie podstawowej akcji */
+        event.preventDefault();
+        /* Wyświetlanie aktywnej klasy na elemencie 'thisProduct' */
+        thisProduct.element.classList.toggle('active');
+        /* Znajdowanie wszystkich aktywnych 'product' */
+        const activeProducts = document.querySelectorAll(select.all.menuProductsActive);
+        /* START PĘTLI: dla każdego aktywnego 'productl */
+        for (let activeProduct of activeProducts) {
+          /* START:  jeśli aktywny produkt nie jest elementem 'thisProduct' */
+          if (activeProduct != thisProduct.element) {
+            /* Usuń klase 'active' dla aktywnego 'product' */
+            activeProduct.classList.remove('active');
+            /* KONIEC: jeśli aktywny produkt nie jest elementem 'thisProduct' */
+          }
+          /* KONIEC: PĘTLI: dla każdego aktywnego 'product' */
+        }
+        /* KONIEC: nasłuchiwanie kliknięcia */
+      });
     }
   }
 
