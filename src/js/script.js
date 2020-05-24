@@ -61,8 +61,11 @@
       thisProduct.data = data;
       /* Wywoływanie metod */
       thisProduct.renderInMenu();
+      thisProduct.getElements();
       thisProduct.initAccordion();
-      console.log('New Product', thisProduct);
+      thisProduct.initOrderForm();
+      thisProduct.processOrder();
+      //console.log('New Product', thisProduct);
     }
     /* Metoda renderowania produktów WEWNĄTRZ KLASY */
     renderInMenu() {
@@ -76,15 +79,25 @@
       /* Dodawanie elementu do menu */
       menuContainer.appendChild(thisProduct.element);
     }
+    /* Metoda znajdowania elementów */
+    getElements() {
+      const thisProduct = this;
+
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
+      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      //console.log('Product form: ', thisProduct.form);
+      //console.log('Product form inputs: ', thisProduct.formInputs);
+    }
     /* Metoda akordeonu */
     initAccordion() {
       const thisProduct = this;
       /* Znajdowanie elementu który ma reagować na kliknięcie */
-      const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-
       /* START: nasłuchiwanie kliknięcia */
-      clickableTrigger.addEventListener('click', function () {
-        console.log('Akordeon kliknięty: ', clickableTrigger);
+      thisProduct.accordionTrigger.addEventListener('click', function () {
+        //console.log('Akordeon kliknięty: ', thisProduct.accordionTrigger);
         /* Zapobieganie podstawowej akcji */
         event.preventDefault();
         /* Wyświetlanie aktywnej klasy na elemencie 'thisProduct' */
@@ -104,6 +117,59 @@
         /* KONIEC: nasłuchiwanie kliknięcia */
       });
     }
+    initOrderForm() {
+      const thisProduct = this;
+      thisProduct.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+      for (let input of thisProduct.formInputs) {
+        input.addEventListener('change', function () {
+          thisProduct.processOrder();
+        });
+      }
+      thisProduct.cartButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+    }
+    processOrder() {
+      const thisProduct = this;
+      /*odczytaj dane z formularza i zapisz w stałej */
+      const formData = utils.serializeFormToObject(thisProduct.form);
+
+      thisProduct.params = {};
+      /* stwórz zmienną i przypisz domyślną cene produktu */
+      let price = thisProduct.data.price;
+      //console.log('domyślna cena: ', price);
+      /* START PĘTLI: dla każdego parametru (paramId) produktu (thisProduct.data.param) */
+      for (let paramId in thisProduct.data.params) {
+        /* zapisz element w produkcie (thisProduct.data.params) z kluczem (paramId) jako stałą */
+        const param = thisProduct.data.params[paramId];
+        /* START PĘTLI: dla każdej opcji (optionId) w opcjach parametrów (param.options) */
+        for (let optionId in param.options) {
+          /* zapisz element w opcjach parametrów (param.options) z kluczem (optionId) jako stałą */
+          const option = param.options[optionId];
+          const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
+          /* START WARUNEK: jeśli opcja (option) jest zaznaczona I nie jest domyślna */
+          if (optionSelected && !option.default) {
+            /* dodaj cenę opcji (option) do zmiennej ceny całościowej (price) */
+            price += option.price;
+            /* KONIEC WARUNKU: jeśli opcja (option) jest zaznaczona I nie jest domyślna */
+            /* START WARUNEK: jeśli opcja (option) nie jest zaznaczona I jest domyślna */
+          } else if (!optionSelected && option.default) {
+            /* odejmij cenę opcji (option) od zmiennej ceny całościowej (price) */
+            price -= option.price;
+            /* KONIEC WARUNKU: jeśli opcja (option) nie jest zaznaczona I jest domyślna */
+          }
+          /* KONIEC PĘTLI: dla każdej opcji (optionId) w opcjacj parametrów (param.options) */
+        }
+        /* KONIEC PĘTLI: dla każdego parametru (paramId) produktu (thisProduct.data.param) */
+      }
+      /* wstaw cene (price) w HTML (thisProduct.priceElem) */
+      thisProduct.priceElem.innerHTML = price;
+    }
+
   }
 
   /* Metody */
