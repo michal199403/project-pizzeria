@@ -88,6 +88,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
       //console.log('Product form: ', thisProduct.form);
       //console.log('Product form inputs: ', thisProduct.formInputs);
     }
@@ -161,6 +162,33 @@
             /* odejmij cenę opcji (option) od zmiennej ceny całościowej (price) */
             price -= option.price;
             /* KONIEC WARUNKU: jeśli opcja (option) nie jest zaznaczona I jest domyślna */
+          }
+          /* WIZUALIZACJA ZAMÓWIENIA NA OBRAZKACH */
+          /* stworz stałą (images) i zapisz w niej wszystkie obrazki dostępnych opcji */
+          const images = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
+          /* START WARUNKU: jeśli opcja jest zaznaczona */
+          if (optionSelected) {
+            if (!thisProduct.params[paramId]) {
+              thisProduct.params[paramId] = {
+                label: param.label,
+                options: {},
+              };
+            }
+            thisProduct.params[paramId].options[optionId] = option.label;
+            /* dla każdego obrazka (image) ze wszystkich obrazków (images) */
+            for (let image of images) {
+              /* dodaj klase (imageVisible) */
+              image.classList.add(classNames.menuProduct.imageVisible);
+            }
+            /* KONIEC WARUNKU: jeśli opcja jest zaznaczona */
+            /* START WARUNKU: jeśli opcja nie jest zaznaczona */
+          } else {
+            /* dla każdego obrazka (image) ze wszystkich obrazków (images) */
+            for (let image of images) {
+              /* usuń klase (imageVisible) */
+              image.classList.remove(classNames.menuProduct.imageVisible);
+            }
+            /* KONIEC WARUNKU: jeśli opcja nie jest zaznaczona */
           }
           /* KONIEC PĘTLI: dla każdej opcji (optionId) w opcjacj parametrów (param.options) */
         }
