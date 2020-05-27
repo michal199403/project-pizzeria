@@ -164,7 +164,7 @@
     }
     initAmountWidget() {
       const thisProduct = this;
-      thisProduct.amountWidget = new amountWidget(thisProduct.amountWidgetElem);
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
       thisProduct.amountWidgetElem.addEventListener('updated', function () {
         thisProduct.processOrder();
       });
@@ -235,7 +235,7 @@
     }
   }
 
-  class amountWidget {
+  class AmountWidget {
     constructor(element) {
       const thisWidget = this;
       thisWidget.getElements(element);
@@ -287,6 +287,31 @@
     }
   }
 
+  class Cart {
+    constructor(element) {
+      const thisCart = this;
+      thisCart.products = [];
+      thisCart.getElements(element);
+      thisCart.initActions();
+      console.log('New Cart: ', thisCart);
+    }
+
+    getElements(element) {
+      const thisCart = this;
+      thisCart.dom = {};
+      thisCart.dom.wrapper = element;
+      thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+    }
+
+    initActions() {
+      const thisCart = this;
+      thisCart.dom.toggleTrigger.addEventListener('click', function () {
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      });
+    }
+  }
+
+
   /* Metody */
   const app = {
     initMenu: function () {
@@ -313,7 +338,12 @@
       thisApp.initData();
       thisApp.initMenu();
     },
+    initCart: function () {
+      const thisApp = this;
+      const cartElem = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart(cartElem);
+    },
   };
-
+  app.initCart();
   app.init();
 }
