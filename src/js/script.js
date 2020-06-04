@@ -389,8 +389,8 @@
       const url = settings.db.url + '/' + settings.db.order;
 
       const payload = {
-        address: thisCart.dom.address,
-        phone: thisCart.dom.phone,
+        address: thisCart.dom.address.value,
+        phone: thisCart.dom.phone.value,
         totalPrice: thisCart.totalPrice,
         totalNumber: thisCart.totalNumber,
         subtotalPrice: thisCart.subtotalPrice,
@@ -399,8 +399,8 @@
       };
       //console.log('adres', thisCart.payload.adress);
       for (const product of thisCart.products) {
-        product.getData();
-        payload.products.push(product);
+        const singleProduct = product.getData();
+        payload.products.push(singleProduct);
       }
       const options = {
         method: 'POST',
@@ -475,14 +475,13 @@
     }
     getData() {
       const thisCartProduct = this;
-      const productData = {
-        id: thisCartProduct.id,
-        amount: thisCartProduct.amount,
-        price: thisCartProduct.price,
-        priceSingle: thisCartProduct.priceSingle,
-        params: thisCartProduct.params,
-      };
-      return productData;
+      return (
+        thisCartProduct.id,
+        thisCartProduct.amount,
+        thisCartProduct.price,
+        thisCartProduct.priceSingle,
+        thisCartProduct.params
+      );
     }
   }
 
