@@ -475,13 +475,14 @@
     }
     getData() {
       const thisCartProduct = this;
-      return (
-        thisCartProduct.id,
-        thisCartProduct.amount,
-        thisCartProduct.price,
-        thisCartProduct.priceSingle,
-        thisCartProduct.params
-      );
+      const productData = {
+        id: thisCartProduct.id,
+        price: thisCartProduct.price,
+        priceSingle: thisCartProduct.priceSingle,
+        amount: thisCartProduct.amount,
+        params: thisCartProduct.params,
+      };
+      return productData;
     }
   }
 
